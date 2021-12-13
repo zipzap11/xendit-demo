@@ -9,7 +9,7 @@ import (
 )
 
 // create e wallet charge > pay with shopeepay return the id of created invoice
-func CreateOvoCharge(writekey string) string {
+func CreateDanaCharge(writekey string) string {
 	xendit.Opt.SecretKey = writekey
 
 	// optional cart items
@@ -28,15 +28,14 @@ func CreateOvoCharge(writekey string) string {
 	// }
 
 	data := ewallet.CreateEWalletChargeParams{
-		ReferenceID:    "test-reference-id2",
+		ReferenceID:    "test-reference-id",
 		Currency:       "IDR",
 		Amount:         1688,
 		CheckoutMethod: "ONE_TIME_PAYMENT",
-		ChannelCode:    "ID_OVO",
+		ChannelCode:    "ID_DANA",
 		ChannelProperties: map[string]string{
 			// home page url
-			// "success_redirect_url": "https://example.com",
-			"mobile_number": "+6281239812420",
+			"success_redirect_url": "https://example.com",
 		},
 		// Basket: []xendit.EWalletBasketItem{
 		// 	ewalletBasketItem,

@@ -27,6 +27,13 @@ func main() {
 	// ovo charge invoice
 	fmt.Printf("\nOVO INVOICE\n")
 	id = inv.CreateOvoCharge(config.WriteKey)
+	fmt.Println()
+	inv.GetEwalletCharge(id, config.ReadKey)
+
+	// grabpay charge invoice
+	fmt.Printf("\nDANA INVOICE\n")
+	id = inv.CreateDanaCharge(config.WriteKey)
+	fmt.Println()
 	inv.GetEwalletCharge(id, config.ReadKey)
 
 	// initiate echo
