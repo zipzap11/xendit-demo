@@ -10,8 +10,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/xendit/xendit-go"
-	"github.com/xendit/xendit-go/invoice"
 )
 
 func main() {
@@ -55,34 +53,4 @@ func main() {
 	})
 
 	e.Start("127.0.0.1:8000")
-}
-
-func createInvoice() {
-	xendit.Opt.SecretKey = "xnd_development_FpeM3C727hIk1e1XxjiwaTBDrogSpOEVklHYMr4tEoTcY8JhQgwtuxUb1yFDLZ"
-	data := invoice.CreateParams{
-		ExternalID: "demo_1475801962607",
-		Amount:     50000,
-	}
-
-	resp, err := invoice.Create(&data)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("created invoice: %+v\n", resp)
-}
-
-func getInvoice(id string) {
-	xendit.Opt.SecretKey = "xnd_development_P4qDfOss0OCpl8RtKrROHjaQYNCk9dN5lSfk+R1l9Wbe+rSiCwZ3jw=="
-
-	data := invoice.GetParams{
-		ID: id,
-	}
-
-	resp, err := invoice.Get(&data)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("retrieved invoice: %+v\n", resp)
 }
