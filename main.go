@@ -7,6 +7,7 @@ import (
 
 	"xendit-test/config"
 	inv "xendit-test/invoice"
+	"xendit-test/obj"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -19,22 +20,24 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// shopeepay charge invoice
-	fmt.Printf("\nSHOPEEPAY INVOICE\n")
-	id := inv.CreateShopeepayCharge(config.WriteKey)
-	inv.GetEwalletCharge(id, config.ReadKey)
+	// create general invoices
+	// every payment method are included as default
+	fmt.Printf("\nCREATE GENERAL INVOICE\n")
+	invoiceObject := obj.InvoiceObject{
+		ID:          "1",
+		SuccessUrl:  "https://google.com",
+		FailUrl:     "https://example.com",
+		Amount:      12000,
+		Name:        "Francisco",
+		Email:       "slashschtye252@gmail.com",
+		Description: "Pulsa 10.000",
+		Currency:    "IDR",
+	}
 
-	// ovo charge invoice
-	fmt.Printf("\nOVO INVOICE\n")
-	id = inv.CreateOvoCharge(config.WriteKey)
-	fmt.Println()
-	inv.GetEwalletCharge(id, config.ReadKey)
+	id := inv.CreateInvoice(config.WriteKey, invoiceObject)
+	fmt.Println("SUCCESS CREATE INVOICE")
 
-	// grabpay charge invoice
-	fmt.Printf("\nDANA INVOICE\n")
-	id = inv.CreateDanaCharge(config.WriteKey)
-	fmt.Println()
-	inv.GetEwalletCharge(id, config.ReadKey)
+	inv.GetInvoice(config.ReadKey, id)
 
 	// initiate echo
 	e := echo.New()
@@ -45,7 +48,7 @@ func main() {
 		Format: "method=${method}, uri=${uri}, status=${status}\n",
 	}))
 
-	// get callback from xendit
+	// get callback from xendit for updated payment status with ewallet
 	// put callback url with your root url + below path in xendit callbacks url dashboard
 	e.POST("/callbacks/ewallet", func(c echo.Context) error {
 		response := map[string]interface{}{}
@@ -54,7 +57,49 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("response callbacks =", response)
+		fmt.Println("response callbacks update status ewallet =", response)
+
+		return nil
+	})
+
+	// get callback from xendit for created FIXED VIRTUAL ACCOUNT
+	// put callback url with your root url + below path in xendit callbacks url dashboard
+	e.POST("/callbacks/virtual-created", func(c echo.Context) error {
+		response := map[string]interface{}{}
+		// decode request body from xendit
+		err := json.NewDecoder(c.Request().Body).Decode(&response)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("response callbacks created virtual account =", response)
+
+		return nil
+	})
+
+	// get callback from xendit for paid FIXED VIRTUAL ACCOUNT
+	// put callback url with your root url + below path in xendit callbacks url dashboard
+	e.POST("/callbacks/virtual-paid", func(c echo.Context) error {
+		response := map[string]interface{}{}
+		// decode request body from xendit
+		err := json.NewDecoder(c.Request().Body).Decode(&response)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("response callbacks paid virtual account =", response)
+
+		return nil
+	})
+
+	// get callback from xendit for paid general invoice
+	// put callback url with your root url + below path in xendit callbacks url dashboard
+	e.POST("/callbacks/invoice", func(c echo.Context) error {
+		response := map[string]interface{}{}
+		// decode request body from xendit
+		err := json.NewDecoder(c.Request().Body).Decode(&response)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("response callbacks paid invoice =", response)
 
 		return nil
 	})

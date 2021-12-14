@@ -1,4 +1,4 @@
-package main
+package obj
 
 import "github.com/xendit/xendit-go"
 
@@ -14,4 +14,15 @@ type CreateEWalletChargeParams struct {
 	CustomerID        string                     `json:"customer_id,omitempty"`
 	Basket            []xendit.EWalletBasketItem `json:"basket,omitempty"`
 	Metadata          map[string]interface{}     `json:"metadata,omitempty"`
+}
+
+type InvoiceObject struct {
+	ID          string
+	SuccessUrl  string
+	FailUrl     string
+	Amount      float64
+	Name        string
+	Email       string
+	Description string
+	Currency    string
 }
